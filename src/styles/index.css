@@ -1,0 +1,503 @@
+@import "tailwindcss";
+
+/* ------------------------------------------------------------------
+   设计 token —— 暖黄 / 米白 / 晨蓝 / 夕阳橙 / 一点绿
+   暖褐墨色取代纯黑，避免冷硬感
+------------------------------------------------------------------ */
+@theme {
+  --color-paper: #fdfaf4;
+  --color-paper-deep: #f7f0e4;
+  --color-ink: #3a332c;
+  --color-ink-soft: #6b6157;
+  --color-ink-faint: #a2988c;
+  --color-sun: #f2b441;
+  --color-sun-soft: #ffd98a;
+  --color-ember: #f0864e;
+  --color-sky: #a8c8de;
+  --color-dawn: #c9dce8;
+  --color-leaf: #8fae7e;
+  --color-rose: #e98a8a;
+
+  --font-sans: "Inter", "PingFang SC", "HarmonyOS Sans SC", "Source Han Sans SC",
+    "Noto Sans SC", "Microsoft YaHei", system-ui, -apple-system, sans-serif;
+  --font-serif: "Noto Serif SC", "Source Han Serif SC", "Songti SC", "STSong",
+    "SimSun", serif;
+
+  --shadow-soft: 0 24px 60px -32px rgba(74, 60, 44, 0.34),
+    0 2px 6px -2px rgba(74, 60, 44, 0.06);
+  --shadow-lift: 0 40px 90px -40px rgba(74, 60, 44, 0.42),
+    0 4px 12px -4px rgba(74, 60, 44, 0.08);
+  --shadow-glow: 0 0 60px -6px rgba(242, 180, 65, 0.5);
+
+  --radius-card: 28px;
+
+  /* 歌词区：每行占用的滚动高度 */
+  --lyric-slot: 42vh;
+}
+
+/* ------------------------------------------------------------------ */
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+    background-color: var(--color-paper);
+    /* clip（而非 hidden）不会创建滚动容器，因此不影响歌词区的 sticky */
+    overflow-x: clip;
+  }
+
+  body {
+    margin: 0;
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-weight: 400;
+    line-height: 1.78;
+    letter-spacing: 0.012em;
+    overflow-x: clip;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  ::selection {
+    background: rgba(242, 180, 65, 0.34);
+    color: var(--color-ink);
+  }
+
+  h1,
+  h2,
+  h3 {
+    margin: 0;
+    font-weight: 400;
+    text-wrap: balance;
+  }
+
+  p {
+    margin: 0;
+    text-wrap: pretty;
+  }
+
+  button {
+    font: inherit;
+    color: inherit;
+  }
+
+  :focus-visible {
+    outline: 2px solid rgba(240, 134, 78, 0.8);
+    outline-offset: 3px;
+    border-radius: 8px;
+  }
+
+  @supports (scrollbar-width: thin) {
+    html {
+      scrollbar-width: thin;
+      scrollbar-color: rgba(162, 152, 140, 0.5) transparent;
+    }
+  }
+
+  ::-webkit-scrollbar {
+    width: 9px;
+    height: 9px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(162, 152, 140, 0.42);
+    border-radius: 999px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(162, 152, 140, 0.68);
+    background-clip: content-box;
+  }
+}
+
+/* ------------------------------------------------------------------
+   组件层：玻璃拟态、柔和卡片、按钮、小标题
+------------------------------------------------------------------ */
+@layer components {
+  .glass {
+    background: color-mix(in srgb, #ffffff 60%, transparent);
+    backdrop-filter: blur(18px) saturate(150%);
+    -webkit-backdrop-filter: blur(18px) saturate(150%);
+    border: 1px solid color-mix(in srgb, #ffffff 72%, transparent);
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.7) inset,
+      0 18px 44px -24px rgba(74, 60, 44, 0.3);
+  }
+
+  .card-soft {
+    position: relative;
+    background: linear-gradient(
+      158deg,
+      rgba(255, 255, 255, 0.88),
+      rgba(255, 250, 240, 0.68)
+    );
+    backdrop-filter: blur(14px) saturate(140%);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    border: 1px solid rgba(255, 255, 255, 0.82);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-soft);
+  }
+
+  .btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    padding: 0.95rem 2.1rem;
+    border: 1px solid transparent;
+    border-radius: 999px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    letter-spacing: 0.07em;
+    cursor: pointer;
+    overflow: hidden;
+    transition:
+      transform 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+      background-color 0.4s ease,
+      color 0.4s ease;
+  }
+
+  .btn:active {
+    transform: scale(0.975);
+  }
+
+  .btn-primary {
+    color: #4b3a1c;
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.94),
+      rgba(255, 235, 196, 0.88)
+    );
+    backdrop-filter: blur(16px) saturate(160%);
+    -webkit-backdrop-filter: blur(16px) saturate(160%);
+    border-color: rgba(255, 255, 255, 0.9);
+    box-shadow:
+      0 20px 46px -22px rgba(196, 132, 42, 0.62),
+      0 1px 0 rgba(255, 255, 255, 0.95) inset;
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow:
+      0 30px 64px -24px rgba(196, 132, 42, 0.72),
+      0 1px 0 rgba(255, 255, 255, 0.95) inset;
+  }
+
+  .btn-ghost {
+    color: var(--color-ink-soft);
+    background: color-mix(in srgb, #ffffff 46%, transparent);
+    backdrop-filter: blur(14px) saturate(140%);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    border-color: rgba(255, 255, 255, 0.7);
+    box-shadow: 0 14px 34px -22px rgba(74, 60, 44, 0.34);
+  }
+
+  .btn-ghost:hover {
+    color: var(--color-ink);
+    background: color-mix(in srgb, #ffffff 72%, transparent);
+    transform: translateY(-1px);
+  }
+
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.7rem;
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.34em;
+    text-transform: uppercase;
+    color: var(--color-ink-faint);
+  }
+
+  .eyebrow::before {
+    content: "";
+    width: 1.7rem;
+    height: 1px;
+    background: currentColor;
+    opacity: 0.55;
+  }
+
+  .text-sun-gradient {
+    background-image: linear-gradient(
+      102deg,
+      #ef7f47 0%,
+      #f2b441 46%,
+      #ffd98a 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .text-dusk-gradient {
+    background-image: linear-gradient(
+      104deg,
+      #f0864e 0%,
+      #f2b441 40%,
+      #ffe6b8 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* 歌词滚动轨道 */
+  .lyrics-track {
+    height: calc(100svh + var(--n, 10) * var(--lyric-slot));
+  }
+
+  /* 顶部「今日进度」细线 */
+  .day-progress {
+    position: fixed;
+    inset: 0 0 auto 0;
+    height: 2px;
+    z-index: 60;
+    transform-origin: 0 50%;
+    background: linear-gradient(
+      90deg,
+      rgba(168, 200, 222, 0.9),
+      rgba(242, 180, 65, 0.95) 55%,
+      rgba(240, 134, 78, 0.95)
+    );
+    box-shadow: 0 0 14px rgba(242, 180, 65, 0.45);
+  }
+
+  /* 页面颗粒感，避免大面积渐变显得廉价 */
+  .grain::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.035;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  .lyric-line {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 5.4rem;
+    padding: 0.9rem 0.5rem;
+    text-align: center;
+    will-change: transform, opacity, filter;
+  }
+
+  .lyric-emphasis {
+    min-height: 8.4rem;
+  }
+
+  @media (min-width: 768px) {
+    .lyric-line {
+      min-height: 6.4rem;
+    }
+    .lyric-emphasis {
+      min-height: 10.5rem;
+    }
+  }
+}
+
+/* ------------------------------------------------------------------
+   动效：慢、温柔、有呼吸感
+------------------------------------------------------------------ */
+@keyframes breathe {
+  0%,
+  100% {
+    opacity: 0.78;
+    letter-spacing: 0.012em;
+  }
+  50% {
+    opacity: 1;
+    letter-spacing: 0.03em;
+  }
+}
+
+@keyframes breathe-soft {
+  0%,
+  100% {
+    opacity: 0.86;
+    transform: translateY(0);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-3px);
+  }
+}
+
+@keyframes float-soft {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes sun-pulse {
+  0%,
+  100% {
+    opacity: 0.85;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.06);
+  }
+}
+
+@keyframes halo-pulse {
+  0%,
+  100% {
+    opacity: 0.42;
+    transform: scale(0.96);
+  }
+  50% {
+    opacity: 0.78;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes glow-pulse {
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+/* 阳光尘埃：上升 + 横飘 */
+@keyframes mote-rise {
+  0% {
+    transform: translate3d(0, 0, 0) scale(0.7);
+    opacity: 0;
+  }
+  12% {
+    opacity: var(--mote-opacity, 0.5);
+  }
+  82% {
+    opacity: var(--mote-opacity, 0.5);
+  }
+  100% {
+    transform: translate3d(var(--mote-dx, 20px), var(--mote-dy, -140px), 0)
+      scale(1.2);
+    opacity: 0;
+  }
+}
+
+@keyframes cloud-drift {
+  from {
+    transform: translate3d(-24vw, 0, 0);
+  }
+  to {
+    transform: translate3d(116vw, 0, 0);
+  }
+}
+
+@keyframes sway {
+  0%,
+  100% {
+    transform: rotate(-1.6deg) translateX(0);
+  }
+  50% {
+    transform: rotate(1.6deg) translateX(6px);
+  }
+}
+
+@keyframes star-fall {
+  0% {
+    transform: translate3d(0, -12vh, 0) rotate(0deg) scale(0.5);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 0.9;
+  }
+  100% {
+    transform: translate3d(var(--star-dx, 24px), 74vh, 0) rotate(540deg)
+      scale(1);
+    opacity: 0;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-120%) skewX(-14deg);
+  }
+  100% {
+    transform: translateX(240%) skewX(-14deg);
+  }
+}
+
+@keyframes ring-glow {
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 0 rgba(242, 180, 65, 0.42),
+      var(--shadow-soft);
+  }
+  50% {
+    box-shadow:
+      0 0 0 14px rgba(242, 180, 65, 0),
+      var(--shadow-soft);
+  }
+}
+
+.animate-breathe {
+  animation: breathe 6.5s ease-in-out infinite;
+}
+.animate-breathe-soft {
+  animation: breathe-soft 7.5s ease-in-out infinite;
+}
+.animate-float-soft {
+  animation: float-soft 8s ease-in-out infinite;
+}
+.animate-sun-pulse {
+  animation: sun-pulse 11s ease-in-out infinite;
+}
+.animate-halo-pulse {
+  animation: halo-pulse 9s ease-in-out infinite;
+}
+.animate-glow-pulse {
+  animation: glow-pulse 8s ease-in-out infinite;
+}
+.animate-sway {
+  animation: sway 9s ease-in-out infinite;
+  transform-origin: 50% 100%;
+}
+.animate-ring-glow {
+  animation: ring-glow 3.6s ease-in-out infinite;
+}
+
+/* ------------------------------------------------------------------ */
+@media (max-width: 767px) {
+  :root {
+    --lyric-slot: 36vh;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .animate-breathe,
+  .animate-breathe-soft,
+  .animate-float-soft,
+  .animate-sun-pulse,
+  .animate-halo-pulse,
+  .animate-glow-pulse,
+  .animate-sway,
+  .animate-ring-glow {
+    animation: none !important;
+  }
+}
