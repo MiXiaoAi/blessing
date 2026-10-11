@@ -36,7 +36,7 @@ export default function HeroSection({ onEnter }: { onEnter: () => void }) {
         </motion.p>
 
         <motion.h1
-          className="mt-8 font-serif text-[clamp(2rem,7.4vw,4.6rem)] leading-[1.34] font-light tracking-[0.05em]"
+          className="mt-8 font-serif text-[clamp(3.4rem,13vw,5.6rem)] leading-[1.28] font-light tracking-[0.05em]"
           initial={{ opacity: 0, y: d(30), filter: "blur(12px)" }}
           animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
           transition={{ duration: d(1.7), delay: d(0.28), ease: EASE }}

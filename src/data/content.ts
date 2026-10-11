@@ -11,7 +11,7 @@ export type LyricLine = {
 
 export const hero = {
   kicker: "写给今天的你",
-  title: "希望你会对自己好一点",
+  title: "天天开心",
   subtitle: "今天也要好好生活呀",
   cta: "打开今日祝福",
   scrollHint: "轻轻往下滑",
@@ -26,7 +26,7 @@ export const lyrics: LyricLine[] = [
   { text: "要吃的饱一点睡的早一点" },
   { text: "别再每天熬夜熬出黑眼圈" },
   { text: "让元气满一点疲倦少一点" },
-  { text: "希望你会对自己好一点", emphasis: true },
+  { text: "好好打扮你的微笑很灿烂", emphasis: true },
 ];
 
 export const blessings = [
