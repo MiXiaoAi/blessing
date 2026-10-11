@@ -43,6 +43,8 @@
     background-color: var(--color-paper);
     /* clip（而非 hidden）不会创建滚动容器，因此不影响歌词区的 sticky */
     overflow-x: clip;
+    /* 吸附：只在歌词区的吸附点附近生效（proximity），不会锁死整页 */
+    scroll-snap-type: y proximity;
   }
 
   body {

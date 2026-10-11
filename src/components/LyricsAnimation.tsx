@@ -1,12 +1,18 @@
-import { memo } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import type { MotionValue } from "framer-motion";
-import { useRef } from "react";
 import { lyrics } from "../data/content";
 import { usePrefersReducedMotion } from "../hooks/usePrefersReducedMotion";
 import { useMediaQuery } from "../hooks/useMediaQuery";
 
 const TOTAL = lyrics.length;
+
+/**
+ * 进度区间：留出首尾一点余量，让第一行与最后一行都能真正「停住」。
+ * 焦点映射与吸附点共用这组参数，保证两者严格对齐。
+ */
+const SNAP_START = 0.035;
+const SNAP_END = 0.965;
 
 /**
  * 单行歌词。
@@ -95,14 +101,40 @@ export default function LyricsAnimation() {
     offset: ["start start", "end end"],
   });
 
-  // 首尾留白，让第一行与最后一行都能真正「停住」
-  const focus = useTransform(scrollYProgress, [0.035, 0.965], [0, TOTAL - 1], {
+  const focus = useTransform(
+    scrollYProgress,
+    [SNAP_START, SNAP_END],
+    [0, TOTAL - 1],
+    { clamp: true },
+  );
+
+  const railScale = useTransform(scrollYProgress, [SNAP_START, SNAP_END], [0, 1], {
     clamp: true,
   });
 
-  const railScale = useTransform(scrollYProgress, [0.035, 0.965], [0, 1], {
-    clamp: true,
-  });
+  /**
+   * 吸附点：把「第 i 行正居中」对应的滚动位置换算成轨道内的像素偏移。
+   *
+   * 轨道高度来自 CSS（100svh + n×slot），其中 svh 与行距所用的单位在移动端
+   * 并不相等，所以这里必须用实测高度，否则误差会随行号累积。
+   */
+  const [snap, setSnap] = useState<{ step: number; base: number } | null>(null);
+
+  useEffect(() => {
+    const measure = () => {
+      const el = trackRef.current;
+      if (!el) return;
+      const trackH = el.offsetHeight;
+      const scrollable = Math.max(1, trackH - window.innerHeight);
+      const step = scrollable * (SNAP_END - SNAP_START) / (TOTAL - 1);
+      const base = scrollable * SNAP_START;
+      setSnap({ step, base });
+    };
+
+    measure();
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, [slotRem]);
 
   return (
     <section
@@ -111,6 +143,23 @@ export default function LyricsAnimation() {
       className="lyrics-track relative"
       style={{ "--n": TOTAL - 1 } as React.CSSProperties}
     >
+      {/* 吸附点：每个点高 1 屏，其顶边落在「该行居中」的位置上，
+          浏览器会在滚动停下时把最近的吸附点对齐到视口顶部 */}
+      {snap ? (
+        <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+          {lyrics.map((_, i) => (
+            <span
+              key={`snap-${i}`}
+              className="absolute left-0 h-[100svh] w-px"
+              style={{
+                top: `${snap.base + snap.step * i}px`,
+                scrollSnapAlign: "start",
+              }}
+            />
+          ))}
+        </div>
+      ) : null}
+
       <div className="sticky top-0 flex h-[100svh] items-center justify-center overflow-hidden px-5">
         {/* 歌词区的柔光衬底，让文字从背景里「浮」出来 */}
         <div
