@@ -12,7 +12,7 @@ import SmileInteraction from "./components/SmileInteraction";
 import { usePageProgress } from "./hooks/usePageProgress";
 
 /**
- * 「把一句祝福，变成一次温暖的相遇」
+ * 「写给今天的你」
  *
  * 整页是一条「一天的光」时间线：
  * Hero（清晨）→ 歌词（上午到午后）→ 三个互动模块（午后）
@@ -43,8 +43,8 @@ export default function App() {
         <Section
           step="01"
           label="Blessing"
-          title="送给今天的你"
-          description="有些祝福不需要理由，只是刚好想对你说。抽一张，收下就好。"
+          title="有一句祝福，刚好在等你"
+          description="有些祝福不需要理由，只是想对你说。抽一张，收下就好。"
         >
           <BlessingCard />
         </Section>
@@ -52,7 +52,7 @@ export default function App() {
         <Section
           step="02"
           label="Smile"
-          title="好好打扮你的微笑，很灿烂"
+          title="好好打扮你的微笑很灿烂"
           description="微笑是会回传的。你按下它的那一刻，它也在轻轻抱住你。"
         >
           <SmileInteraction />
@@ -61,7 +61,7 @@ export default function App() {
         <Section
           step="03"
           label="Tonight"
-          title="要吃的饱一点，睡的早一点"
+          title="要吃的饱一点睡的早一点"
           description="今天的小目标不用很大，能照顾好自己的地方，都值得被记下来。"
         >
           <DailyReminder />

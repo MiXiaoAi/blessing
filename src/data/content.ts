@@ -10,7 +10,7 @@ export type LyricLine = {
 };
 
 export const hero = {
-  kicker: "把一句祝福，变成一次温暖的相遇",
+  kicker: "写给今天的你",
   title: "希望你会对自己好一点",
   subtitle: "今天也要好好生活呀",
   cta: "打开今日祝福",
@@ -19,16 +19,26 @@ export const hero = {
 
 export const lyrics: LyricLine[] = [
   { text: "每天好像都在原地转圈圈" },
-  { text: "闹钟响了七点，梦还留在很远的地方" },
-  { text: "你已经很努力了，只是没有人这样告诉你" },
-  { text: "你的心情好一点，emo少一点", emphasis: true },
-  { text: "把昨天的疲惫，就留在昨天" },
-  { text: "让运气好一点，烦恼少一点", emphasis: true },
-  { text: "你值得被生活，轻轻拥抱一下" },
-  { text: "阳光暖暖，它会照在你身边", emphasis: true },
-  { text: "要吃的饱一点，睡的早一点" },
-  { text: "好好打扮你的微笑，很灿烂" },
+  { text: "试图改变却一点也不简单" },
+  { text: "只好默念这人生苦短" },
+  { text: "推开窗帘又是新鲜的一天" },
+  { text: "幸福看似依然距离很遥远" },
+  { text: "许下的愿偷偷藏在心里边" },
+  { text: "谁在留恋匆匆的片段" },
+  { text: "好好打扮你的微笑很灿烂" },
+  { text: "我希望" },
+  { text: "你的心情好一点 emo 少一点", emphasis: true },
+  { text: "不要每天挂着一张囧字脸" },
+  { text: "让运气好一点烦恼少一点", emphasis: true },
+  { text: "阳光暖暖它会照在你身边", emphasis: true },
+  { text: "要吃的饱一点睡的早一点" },
+  { text: "别再每天熬夜熬出黑眼圈" },
+  { text: "让元气满一点疲倦少一点" },
   { text: "希望你会对自己好一点", emphasis: true },
+  { text: "幸福看似依然距离很遥远" },
+  { text: "许下的愿偷偷藏在心里边" },
+  { text: "谁在留恋匆匆的片段" },
+  { text: "好好打扮你的微笑很灿烂" },
 ];
 
 export const blessings = [

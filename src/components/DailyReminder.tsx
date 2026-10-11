@@ -99,7 +99,7 @@ export default function DailyReminder() {
               今日小目标
             </span>
             <p className="mt-3 font-serif text-[clamp(1.05rem,2.9vw,1.4rem)] font-light text-ink">
-              要吃的饱一点，睡的早一点
+              要吃的饱一点睡的早一点
             </p>
           </div>
 

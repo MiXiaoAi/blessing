@@ -277,30 +277,6 @@
     mix-blend-mode: multiply;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
-
-  .lyric-line {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 5.4rem;
-    padding: 0.9rem 0.5rem;
-    text-align: center;
-    will-change: transform, opacity, filter;
-  }
-
-  .lyric-emphasis {
-    min-height: 8.4rem;
-  }
-
-  @media (min-width: 768px) {
-    .lyric-line {
-      min-height: 6.4rem;
-    }
-    .lyric-emphasis {
-      min-height: 10.5rem;
-    }
-  }
 }
 
 /* ------------------------------------------------------------------

@@ -231,7 +231,7 @@ export default function SmileInteraction() {
               exit={{ opacity: 0 }}
               transition={{ duration: 0.8 }}
             >
-              「好好打扮你的微笑，很灿烂」
+              「好好打扮你的微笑很灿烂」
               <br />
               这里的微笑按钮，今天可以按很多次。
             </motion.p>
