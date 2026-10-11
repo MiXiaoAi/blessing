@@ -1,35 +1,14 @@
-import { useEffect, useRef, useState } from "react";
+import { useScroll } from "framer-motion";
+import type { MotionValue } from "framer-motion";
 
 /**
- * 用 rAF 节流读取滚动进度，避免 scroll 事件高频触发导致的抖动。
- * progress: 0 = 页面顶部，1 = 页面底部
+ * 整页滚动进度（0 = 顶部，1 = 底部）。
+ *
+ * 返回 MotionValue 而非 state：滚动时由它直接驱动 motion 元素的样式，
+ * 不触发 React 重渲染。若用 state，每帧都会重渲染整棵组件树
+ * （含粒子、多层渐变、全部歌词行），移动端会明显掉帧。
  */
-export function usePageProgress() {
-  const [progress, setProgress] = useState(0);
-  const frame = useRef<number | null>(null);
-
-  useEffect(() => {
-    const read = () => {
-      frame.current = null;
-      const doc = document.documentElement;
-      const max = doc.scrollHeight - window.innerHeight;
-      setProgress(max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0);
-    };
-
-    const onScroll = () => {
-      if (frame.current !== null) return;
-      frame.current = window.requestAnimationFrame(read);
-    };
-
-    read();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
-      if (frame.current !== null) window.cancelAnimationFrame(frame.current);
-    };
-  }, []);
-
-  return progress;
+export function usePageProgress(): MotionValue<number> {
+  const { scrollYProgress } = useScroll();
+  return scrollYProgress;
 }

@@ -27,6 +27,7 @@ const LyricRow = memo(function LyricRow({
   emphasis,
   reduced,
   slotRem,
+  rich,
 }: {
   index: number;
   focus: MotionValue<number>;
@@ -34,6 +35,8 @@ const LyricRow = memo(function LyricRow({
   emphasis: boolean;
   reduced: boolean;
   slotRem: number;
+  /** 是否启用高开销的模糊 / 文字光晕（仅桌面端） */
+  rich: boolean;
 }) {
   // 负数 = 还没轮到（在下方），正数 = 已经唱过（在上方）
   const d = useTransform(focus, (f) => f - index);
@@ -46,25 +49,34 @@ const LyricRow = memo(function LyricRow({
   );
   const y = useTransform(d, (v) => `${(v * slotRem).toFixed(3)}rem`);
   const scale = useTransform(d, [-1, 0, 1], [0.93, 1, 0.93]);
+
+  /**
+   * 性能取舍：
+   * blur / textShadow / letterSpacing 都是每帧高开销属性——前者触发 GPU 模糊，
+   * 后两者触发文字重绘与重排版（letterSpacing 会 layout thrash）。
+   * 因此只在桌面端启用；移动端仅保留 opacity / transform，走合成器，几乎免费。
+   */
   const blur = useTransform(
     d,
     [-1.7, -0.5, 0, 0.5, 1.7],
     [reduced ? 0 : 10, reduced ? 0 : 3, 0, reduced ? 0 : 3, reduced ? 0 : 10],
   );
-  const filter = useTransform(blur, (b) => `blur(${b.toFixed(2)}px)`);
+  const filter = useTransform(blur, (b) =>
+    rich ? `blur(${b.toFixed(2)}px)` : "none",
+  );
 
   // 焦点行的光晕、字距与亮度
   const glow = useTransform(d, [-0.7, 0, 0.7], [0, 1, 0]);
-  const textShadow = useTransform(glow, (g) =>
-    emphasis
+  const textShadow = useTransform(glow, (g) => {
+    if (!rich) return "none";
+    return emphasis
       ? `0 0 ${18 * g + 6}px rgba(242,180,65,${0.42 * g}), 0 0 ${
           44 * g
         }px rgba(240,134,78,${0.24 * g})`
-      : `0 0 ${16 * g}px rgba(255,232,190,${0.5 * g})`,
-  );
-  const letterSpacing = useTransform(
-    glow,
-    (g) => `${(0.028 + g * 0.05).toFixed(4)}em`,
+      : `0 0 ${16 * g}px rgba(255,232,190,${0.5 * g})`;
+  });
+  const letterSpacing = useTransform(glow, (g) =>
+    rich ? `${(0.028 + g * 0.05).toFixed(4)}em` : "0.028em",
   );
 
   const size = emphasis
@@ -143,14 +155,15 @@ export default function LyricsAnimation() {
       className="lyrics-track relative"
       style={{ "--n": TOTAL - 1 } as React.CSSProperties}
     >
-      {/* 吸附点：每个点高 1 屏，其顶边落在「该行居中」的位置上，
-          浏览器会在滚动停下时把最近的吸附点对齐到视口顶部 */}
+      {/* 吸附点：每个点只需「位置」，因此做成 1px 细线而非整屏高。
+          整屏高的吸附点会让浏览器每帧做大量吸附匹配计算（实测移动端掉帧主因），
+          1px 的定位成本几乎为零 */}
       {snap ? (
         <div className="pointer-events-none absolute inset-0" aria-hidden="true">
           {lyrics.map((_, i) => (
             <span
               key={`snap-${i}`}
-              className="absolute left-0 h-[100svh] w-px"
+              className="absolute left-0 h-px w-px"
               style={{
                 top: `${snap.base + snap.step * i}px`,
                 scrollSnapAlign: "start",
@@ -181,6 +194,7 @@ export default function LyricsAnimation() {
               emphasis={Boolean(line.emphasis)}
               reduced={reduced}
               slotRem={slotRem}
+              rich={isDesktop && !reduced}
             />
           ))}
         </div>

@@ -1,4 +1,5 @@
 import { useCallback, useState } from "react";
+import { motion, useTransform } from "framer-motion";
 import Atmosphere from "./components/Atmosphere";
 import BlessingCard from "./components/BlessingCard";
 import DailyReminder from "./components/DailyReminder";
@@ -70,20 +71,29 @@ export default function App() {
         <FooterMessage />
       </main>
 
-      {/* 进入歌词区之后，右下角留一个回到清晨的入口 */}
-      {entered && progress > 0.08 ? (
-        <button
-          type="button"
-          onClick={() =>
-            document
-              .getElementById("hero")
-              ?.scrollIntoView({ behavior: "smooth", block: "start" })
-          }
-          className="glass fixed bottom-6 left-1/2 z-50 -translate-x-1/2 rounded-full px-5 py-2.5 text-[0.7rem] tracking-[0.22em] text-ink-soft transition-all duration-500 hover:-translate-y-0.5 hover:text-ink sm:bottom-8"
-        >
-          回到清晨
-        </button>
-      ) : null}
+      {/* 进入歌词区之后，底部留一个回到清晨的入口。
+          用 MotionValue 驱动透明度而非条件渲染，避免滚动时反复挂载/卸载 */}
+      {entered ? <BackToMorning /> : null}
     </>
+  );
+}
+
+function BackToMorning() {
+  const progress = usePageProgress();
+  const opacity = useTransform(progress, [0.02, 0.1], [0, 1]);
+
+  return (
+    <motion.button
+      type="button"
+      onClick={() =>
+        document
+          .getElementById("hero")
+          ?.scrollIntoView({ behavior: "smooth", block: "start" })
+      }
+      style={{ opacity }}
+      className="glass fixed bottom-6 left-1/2 z-50 -translate-x-1/2 rounded-full px-5 py-2.5 text-[0.7rem] tracking-[0.22em] text-ink-soft transition-colors duration-500 hover:text-ink sm:bottom-8"
+    >
+      回到清晨
+    </motion.button>
   );
 }

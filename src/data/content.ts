@@ -18,14 +18,6 @@ export const hero = {
 };
 
 export const lyrics: LyricLine[] = [
-  { text: "每天好像都在原地转圈圈" },
-  { text: "试图改变却一点也不简单" },
-  { text: "只好默念这人生苦短" },
-  { text: "推开窗帘又是新鲜的一天" },
-  { text: "幸福看似依然距离很遥远" },
-  { text: "许下的愿偷偷藏在心里边" },
-  { text: "谁在留恋匆匆的片段" },
-  { text: "好好打扮你的微笑很灿烂" },
   { text: "我希望" },
   { text: "你的心情好一点 emo 少一点", emphasis: true },
   { text: "不要每天挂着一张囧字脸" },
