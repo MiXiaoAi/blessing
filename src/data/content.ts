@@ -35,10 +35,6 @@ export const lyrics: LyricLine[] = [
   { text: "别再每天熬夜熬出黑眼圈" },
   { text: "让元气满一点疲倦少一点" },
   { text: "希望你会对自己好一点", emphasis: true },
-  { text: "幸福看似依然距离很遥远" },
-  { text: "许下的愿偷偷藏在心里边" },
-  { text: "谁在留恋匆匆的片段" },
-  { text: "好好打扮你的微笑很灿烂" },
 ];
 
 export const blessings = [
